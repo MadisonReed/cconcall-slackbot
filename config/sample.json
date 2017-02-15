@@ -1,0 +1,14 @@
+{
+  "slack" : {
+    "emoji": ":raising_hand:",
+    "emoji_conversation": ":raising_hand:",
+    "welcome_message": "",
+    "slack_token": "",
+    "bot_name": "Color Crew Oncall",
+    "cache_interval_seconds": 3600,
+    "next_in_queue_interval": 60,
+    "test_user": "",
+    "oncall_slackers": [
+    ]
+  }
+}

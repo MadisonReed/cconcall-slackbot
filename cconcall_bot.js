@@ -303,20 +303,33 @@ bot.on('message', function (data) {
               }
               else if (message.match(ADD_USER_REGEX) || message.match(ADD_USERID_REGEX)) { // add user
                 var addUser = message.match(ADD_USER_REGEX) ? message.match(ADD_USER_REGEX)[1] : null;
+                var tempAddUser = null;
                 var addUserId = message.match(ADD_USERID_REGEX);
-                if (addUserId) {
+                if (addUser) {
+                  getUser(FIND_BY_NAME, addUser, function(err, user) {
+                    if (user) {
+                      addUser = user.name;
+                    } else {
+                      tempAddUser = addUser;
+                      addUser = null;
+                    }
+                  });
+                }
+                else if (addUserId) {
                   getUser(FIND_BY_ID, addUserId[1], function(err, user) {
                     addUser = user.name;
                   });
                 }
 
-                if (oncallSlackers.indexOf(addUser) == -1) {
+                if (addUser && oncallSlackers.indexOf(addUser) == -1) {
                   oncallSlackers.push(addUser);
                   writeConfig(new function() {
                     bot.postMessageToUser(user.name, addUser + ' was added.', {icon_emoji: iconEmoji});
                   });
-                } else {
+                } else if (oncallSlackers.indexOf(addUser) > 0) {
                   bot.postMessageToUser(user.name, addUser + ' already exists.', {icon_emoji: iconEmoji});
+                } else if (!addUser && tempAddUser) {
+                  bot.postMessageToUser(user.name, "Sorry, didn't find a user with the name *" + tempAddUser + "* to add.", {icon_emoji: iconEmoji});
                 }
               }
               else if (message.match(REMOVE_USER_REGEX) || message.match(REMOVE_USERID_REGEX)) { // remove user

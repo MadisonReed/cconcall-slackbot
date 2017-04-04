@@ -32,13 +32,13 @@ const FIND_BY_EMAIL = 1;
 const FIND_BY_NAME = 2;
 
 // commands
-const HELP_REGEX = new RegExp('^help');
-const WHO_REGEX = new RegExp('^who$');
-const VERSION_REGEX = new RegExp('^version');
-const ADD_USER_REGEX = new RegExp('^add (\\\w+)');
-const ADD_USERID_REGEX = new RegExp('^add <@(\\\w+)>');
-const REMOVE_USER_REGEX = new RegExp('^remove (\\\w+)');
-const REMOVE_USERID_REGEX = new RegExp('^remove <@(\\\w+)>');
+const HELP_REGEX = new RegExp('^[hH]elp$');
+const WHO_REGEX = new RegExp('^[wW]ho$');
+const VERSION_REGEX = new RegExp('^[vV]ersion$');
+const ADD_USER_REGEX = new RegExp('^[aA]dd (\\\w+)$');
+const ADD_USERID_REGEX = new RegExp('^[aA]dd <@(\\\w+)>$');
+const REMOVE_USER_REGEX = new RegExp('^[rR]emove (\\\w+)$');
+const REMOVE_USERID_REGEX = new RegExp('^[rR]emove <@(\\\w+)>$');
 
 /**
  * Send a message to the oncall people.
@@ -176,7 +176,7 @@ var getChannel = function (channelId, callback) {
  * @param callback
  */
 var getUser = function (findBy, value, callback) {
-  if (findBy == FIND_BY_EMAIL) {
+  if (findBy == FIND_BY_EMAIL && value.indexOf('@') > 0) {
     cache.get('users', function (err, userObj) {
       if (userObj == undefined) {
         cb = function (err, results) {
@@ -207,9 +207,7 @@ var getUser = function (findBy, value, callback) {
           callback(!userObj ? value + " not mapped to user" : null, userObj);
         }
       });
-    }
-  else
-    if (findBy == FIND_BY_ID) {
+  } else if (findBy == FIND_BY_ID && value.indexOf('U') == 0 && value.length == 9) {
       cache.get('ID:' + value, function (err, userObj) {
         if (userObj == undefined) {
           cb = function (err, results) {

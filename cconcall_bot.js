@@ -219,6 +219,8 @@ var getUser = function (findBy, value, callback) {
         callback(!userObj ? value + " not mapped to user" : null, userObj);
       }
     });
+  } else {
+    callback(null,':ghost:');
   }
 };
 
@@ -281,6 +283,9 @@ bot.on('message', function (data) {
             enableBotBotComm = true;
           }
         });
+      } else
+      {
+        //debug("noise" + JSON.stringify(data));
       }
 
       // handle normal channel interaction
@@ -329,7 +334,7 @@ bot.on('message', function (data) {
                 if (addUser) {
                   getUser(FIND_BY_NAME, addUser, function (err, user) {
                     if (user) {
-                      addUser = user.name;
+                      addUser = user.id;
                     } else {
                       tempAddUser = addUser;
                       addUser = null;
@@ -338,17 +343,17 @@ bot.on('message', function (data) {
                 }
                 else if (addUserId) {
                   getUser(FIND_BY_ID, addUserId[1], function (err, user) {
-                    addUser = user.name;
+                    addUser = user;
                   });
                 }
 
                 if (addUser && oncallSlackers.indexOf(addUser) == -1) {
-                  oncallSlackers.push(addUser);
+                  oncallSlackers.push(addUser.id);
                   writeConfig(new function () {
-                    bot.postMessageToUser(user.name, addUser + ' was added.', {icon_emoji: iconEmoji});
+                    bot.postMessageToUser(user.name, addUser.name + ' was added.', {icon_emoji: iconEmoji});
                   });
-                } else if (oncallSlackers.indexOf(addUser) > 0) {
-                  bot.postMessageToUser(user.name, addUser + ' already exists.', {icon_emoji: iconEmoji});
+                } else if (oncallSlackers.indexOf(addUser.id) > 0) {
+                  bot.postMessageToUser(user.name, addUser.name + ' already exists.', {icon_emoji: iconEmoji});
                 } else if (!addUser && tempAddUser) {
                   bot.postMessageToUser(user.name, "Sorry, didn't find a user with the name *" + tempAddUser + "* to add.", {icon_emoji: iconEmoji});
                 }
@@ -358,16 +363,16 @@ bot.on('message', function (data) {
                 var removeUserId = message.match(REMOVE_USERID_REGEX);
                 if (removeUserId) {
                   getUser(FIND_BY_ID, removeUserId[1], function (err, user) {
-                    removeUser = user.name;
+                    removeUser = user;
                   });
                 }
 
-                var userIndex = oncallSlackers.indexOf(removeUser);
+                var userIndex = oncallSlackers.indexOf(removeUser.id);
                 if (userIndex != -1) {
                   oncallSlackers.splice(userIndex, 1);
 
                   writeConfig(new function () {
-                    bot.postMessageToUser(user.name, removeUser + ' was removed.', {icon_emoji: iconEmoji});
+                    bot.postMessageToUser(user.name, removeUser.name + ' was removed.', {icon_emoji: iconEmoji});
                   });
                 }
               }

@@ -2,7 +2,7 @@
   "author": "Madison Reed <eng@madison-reed.com>",
   "name": "cconcall-slackbot",
   "description": "Color Crew #slack bot",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "private": true,
   "engines": {
     "node": "4.4.6",
